@@ -10,4 +10,9 @@ public class DescontoParaEstudantes implements Desconto{
 		
 	}
 
+	@Override
+	public String getDescricao() {
+		return "Desconto Estudante";
+	}
+
 }

@@ -4,46 +4,53 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import javax.persistence.ManyToOne;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class DescontoTest {
 
+	private Sala sala;
+
+	private Filme filme;
+
+	private Sessao sessao;
+
+	private Lugar lugar;
+
+	@Before
+	public void preparaDados() {
+		sala = new Sala("Eldorado - IMAX", new BigDecimal("20.5"));
+		filme = new Filme("Rogue One", Duration.ofMinutes(120), "SCI-FI", new BigDecimal("12"));
+		sessao = new Sessao(LocalTime.parse("10:00:00"), filme, sala);
+
+		lugar = new Lugar("a", 1);
+	}
 
 	@Test
 	public void naoDeveConcederDescontoParaIngressoNormal() {
-		Sala sala = new Sala("Eldorado - IMAX", new BigDecimal("20.5"));
-		Filme filme = new Filme("Rogue One", Duration.ofMinutes(120),
-				"SCI-FI", new BigDecimal("12"));
-		Sessao sessao = new Sessao(LocalTime.parse("10:00:00"), filme, sala);
-		Ingresso ingresso = new Ingresso(sessao, new SemDesconto());
+
+		Ingresso ingresso = new Ingresso(sessao, TipoDeIngresso.INTEIRO, lugar);
 		BigDecimal precoEsperado = new BigDecimal("32.50");
-		Assert.assertEquals(precoEsperado, ingresso.getPreco());	
+		Assert.assertEquals(precoEsperado, ingresso.getPreco());
 	}
-	
+
 	@Test
 	public void deveConcederDescontoDe30PorcentoParaIngressosDeClientesDeBancos() {
-		Sala sala = new Sala("Eldorado - IMAX", new BigDecimal("20.5"));
-		Filme filme = new Filme("Rogue One", Duration.ofMinutes(120),
-				"SCI-FI", new BigDecimal("12"));
-		Sessao sessao = new Sessao(LocalTime.parse("10:00:00"), filme, sala);
-		Ingresso ingresso = new Ingresso(sessao, new DescontoParaBancos());
-		
+
+		Ingresso ingresso = new Ingresso(sessao, TipoDeIngresso.BANCO, lugar);
 		BigDecimal precoEsperado = new BigDecimal("22.75");
 		Assert.assertEquals(precoEsperado, ingresso.getPreco());
 	}
 
 	@Test
 	public void deveConcederDescontoDe50PorcentoParaIngressoDeEstudante() {
-		Sala sala = new Sala("Eldorado - IMAX", new BigDecimal("20.5"));
-		Filme filme = new Filme("Rogue One", Duration.ofMinutes(120),
-				"SCI-FI", new BigDecimal("12"));
-		Sessao sessao = new Sessao(LocalTime.parse("10:00:00"), filme, sala);
-		Ingresso ingresso = new Ingresso(sessao, new DescontoParaEstudantes());
-		
+
+		Ingresso ingresso = new Ingresso(sessao, TipoDeIngresso.ESTUDANTE, lugar);
 		BigDecimal precoEsperado = new BigDecimal("16.25");
-		Assert.assertEquals(precoEsperado, ingresso.getPreco()); 
+		Assert.assertEquals(precoEsperado, ingresso.getPreco());
 	}
-	
-	
+
 }

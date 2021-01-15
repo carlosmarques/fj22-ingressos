@@ -27,6 +27,7 @@ public class Lugar {
     /**
      * @deprecated hibernate only
      */
+    
     public Lugar() {
     }
 
